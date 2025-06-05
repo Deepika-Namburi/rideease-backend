@@ -1,12 +1,13 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
-const app = express();
 require("dotenv").config();
+
+const app = express();
 
 // Middleware
 app.use(cors({
-  origin: "*",  // Allow all origins during development (fix for 127.0.0.1 vs localhost)
+  origin: "*",  // You can replace with Netlify domain later
   methods: ["GET", "POST", "PATCH", "DELETE"],
   credentials: true
 }));
@@ -24,13 +25,16 @@ app.use("/requests", requestRoutes);
 app.use("/messages", messageRoutes);
 
 // MongoDB connection
-mongoose.connect("mongodb+srv://dbUser:dbPassword@cluster0.mudux5o.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0", {
+const MONGO_URI = process.env.MONGO_URI;
+const PORT = process.env.PORT || 5000;
+
+mongoose.connect(MONGO_URI, {
   dbName: "ride_share",
 })
 .then(() => {
   console.log("✅ Connected to MongoDB");
-  app.listen(5000, () => {
-    console.log("🚀 Server is running at http://localhost:5000");
+  app.listen(PORT, () => {
+    console.log(`🚀 Server is running at http://localhost:${PORT}`);
   });
 })
 .catch((err) => {
